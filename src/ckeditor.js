@@ -29,12 +29,18 @@ import PasteFromOffice from '@ckeditor/ckeditor5-paste-from-office/src/pastefrom
 import Table from '@ckeditor/ckeditor5-table/src/table';
 import TableToolbar from '@ckeditor/ckeditor5-table/src/tabletoolbar';
 import Alignment from '@ckeditor/ckeditor5-alignment/src/alignment';
-import CodeBlock from '@ckeditor/ckeditor5-code-block/src/codeblock';
+import Adapter from './adapter';
 
-export default class BalloonEditor extends BalloonEditorBase {}
+function UploadAdapterPlugin( editor ) {
+	editor.plugins.get( 'FileRepository' ).createUploadAdapter = loader => {
+		return new Adapter( loader, MindsEditor.config.uploadHandler );
+	};
+}
+
+export default class MindsEditor extends BalloonEditorBase {}
 
 // Plugins to include in the build.
-BalloonEditor.builtinPlugins = [
+MindsEditor.builtinPlugins = [
 	Essentials,
 	UploadAdapter,
 	Autoformat,
@@ -57,12 +63,11 @@ BalloonEditor.builtinPlugins = [
 	PasteFromOffice,
 	Table,
 	TableToolbar,
-	Alignment,
-	CodeBlock
+	Alignment
 ];
 
 // Editor configuration.
-BalloonEditor.defaultConfig = {
+MindsEditor.defaultConfig = {
 	toolbar: {
 		items: [
 			'heading',
@@ -82,8 +87,7 @@ BalloonEditor.defaultConfig = {
 			'insertTable',
 			'mediaEmbed',
 			'undo',
-			'redo',
-			'codeBlock'
+			'redo'
 		]
 	},
 	image: {
@@ -102,5 +106,6 @@ BalloonEditor.defaultConfig = {
 		]
 	},
 	// This value must be kept in sync with the language defined in webpack.config.js.
-	language: 'en'
+	language: 'en',
+	extraPlugins: [ UploadAdapterPlugin ]
 };
